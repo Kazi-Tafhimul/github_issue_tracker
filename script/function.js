@@ -8,19 +8,41 @@ const labelConfig = {
     }
 let allIssues = [];
 let currentFilter = 'all';
+const toggleLoader = (show) =>{
+    const loader = document.getElementById('loader');
+    if(show){
+        loader.classList.remove('hidden');
+
+    }
+    else{
+        loader.classList.add('hidden');
+    }
+
+}
 const loadCard = () =>{
+    
+    toggleLoader(true)
     fetch('https://phi-lab-server.vercel.app/api/v1/lab/issues')
       .then(res => res.json())
       .then(result => {
         allIssues  = result.data;
+        toggleLoader(false)
         displayCard(allIssues);
         
       })
 }
+
 const searchIssues = () =>{
     const searchText = document.getElementById('search-input').value;
+    // const container = document.getElementById('card-container');
+    // container.innerHTML = '';
+    toggleLoader(true);
+
      if(searchText.trim() === ""){
-         loadCard();
+         const filtered = (currentFilter === 'all')?
+         allIssues:allIssues.filter(issue => issue.status === currentFilter);
+         displayCard(filtered)
+         toggleLoader(false)
          return;
      }
     fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${searchText}`)
@@ -30,16 +52,10 @@ const searchIssues = () =>{
         const sectionWiseData = apiData.filter(issue => {
             return (currentFilter === "all" || issue.status === currentFilter)
         });
+        toggleLoader(false);
         displayCard(sectionWiseData);
     })
-    const filtered = allIssues.filter(issue => {
-        const matcheStatus = (currentFilter === 'all' || issue.status === currentFilter);
-        const matchSearch = issue.title.toLowerCase().includes(searchText);
-        return matcheStatus && matchSearch
-
-
-    });
-    displayCard(filtered);
+    
 }
 const filterIssues = (status) => {
     currentFilter = status;
@@ -52,14 +68,8 @@ const filterIssues = (status) => {
     if(activeBtn){
         activeBtn.classList.add('btn-primary')
     }
-    if(status === 'all'){
-        displayCard(allIssues);
-
-    }
-    else{
-        const filtered = allIssues.filter(issue => issue.status === status);
-        displayCard(filtered);
-    }
+    
+    searchIssues()
 
 }
 
