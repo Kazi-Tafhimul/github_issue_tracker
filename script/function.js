@@ -17,6 +17,15 @@ const loadCard = () =>{
       })
 }
 const filterIssues = (status) => {
+    const allButtons = document.querySelectorAll('.filter-btn');
+    allButtons.forEach(btn => {
+        btn.classList.remove('btn-primary');
+
+    });
+    const activeBtn = document.getElementById(`btn-${status}`);
+    if(activeBtn){
+        activeBtn.classList.add('btn-primary')
+    }
     if(status === 'all'){
         displayCard(allIssues);
 

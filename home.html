@@ -49,9 +49,9 @@
     </section>
     <section class="body bg-[#F8FAFC] flex flex-col justify-center items-center">
         <div class="bg-white w-[80%] flex flex-row justify-start gap-4 mx-auto mt-6 mb-2 p-5 rounded shadow-sm">
-           <button onclick="filterIssues('all')" class="btn btn-primary">All</button>
-           <button onclick="filterIssues('open')" class="btn">Open</button>
-           <button onclick="filterIssues('closed')" class="btn">Closed</button>
+           <button id="btn-all" onclick="filterIssues('all')" class="btn btn-primary filter-btn">All</button>
+           <button id="btn-open" onclick="filterIssues('open')" class="btn filter-btn">Open</button>
+           <button id="btn-closed" onclick="filterIssues('closed')" class="btn filter-btn">Closed</button>
 
         </div>
         <div class="bg-white w-[80%] flex flex-row justify-between mt-1 p-5 rounded shadow-sm">
