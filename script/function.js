@@ -73,6 +73,55 @@ const filterIssues = (status) => {
 
 }
 
+const showDetails = (issue) => {
+    const modal = document.getElementById('my_modal_5');
+    const title = document.getElementById('modal-title');
+    const description = document.getElementById('modal-description');
+    const modalStatus = document.getElementById('modal-status');
+    const modalAuthor = document.getElementById('modal-author');
+    const modalDate = document.getElementById('modal-date');
+    const modalLabels = document.getElementById('modal-labels');
+    const assignee = document.getElementById('modal-assignee');
+    const modalPriority = document.getElementById('modal-priority');
+
+    title.innerText = issue.title;
+    description.innerText = issue.description;
+    modalAuthor.innerText = `Opened by ${issue.author}`;
+    modalDate.innerText = new Date(issue.createdAt).toLocaleDateString();
+    assignee.innerText = issue.author;
+
+    if(issue.status === 'open'){
+        modalStatus.innerText = 'Opened';
+        modalStatus.classList.add('px-3', 'py-1', 'rounded-full', 'bg-green-500', 'text-white', 'font-normal', 'text-[12px]')
+    }
+    else{
+        modalStatus.innerText = 'Closed';
+        modalStatus.classList.add('px-3', 'py-1', 'rounded-full', 'bg-violet-500', 'text-white', 'font-normal', 'text-[12px]')
+
+    }
+    let priorityColor = '';
+    if(issue.priority === 'high'){
+        priorityColor = 'bg-red-500';
+    }
+    else if(issue.priority === 'medium'){
+        priorityColor = 'bg-orange-500';
+    }
+    else if(issue.priority === 'low'){
+        priorityColor = 'bg-violet-500';
+    }
+    modalPriority.classList.add('px-4', 'py-1', 'rounded-full', 'text-white', 'font-bold', 'text-[12px]', 'uppercase', '${priorityColor}')
+    modalLabels.innerHTML = issue.labels.map(label => {
+        const config = labelConfig[label.toLowerCase()] || {color: "bg-gray-100", icon: "fa-tag"};
+        return `
+            <span class="${config.color} text-[10px] font-bold px-2 py-1 rounded-full border flex items-center gap-1">
+                <i class="fa-solid ${config.icon}"></i> ${label.toUpperCase()}
+            </span>`;
+    }).join('');
+
+    modal.showModal();
+
+}
+
 const displayCard = (issues) =>{
     const container = document.getElementById('card-container')
     const issuesCount = document.getElementById('issues-count')
@@ -85,6 +134,11 @@ const displayCard = (issues) =>{
     issues.forEach(issue => {
 
         const newCard = document.createElement('div');
+        newCard.onclick = () => {
+            showDetails(issue)
+
+        };
+        newCard.classList.add('cursor-pointer');
         let statusImage='';
         
         let borderTopStyle = '';
@@ -122,7 +176,7 @@ const displayCard = (issues) =>{
             <div class="p-5 flex flex-col gap-4">
                 <div class="flex flex-row justify-between items-start">
                     <img src= ${statusImage}  alt="status">
-                    <span class="font-bold text-[12px] px-3 py-1 rounded-full uppercase ${priorityStyle.split(' ')[0]} ${priorityStyle.split(' ')[1]}">
+                    <span class="font-bold text-[12px] px-3 py-1 rounded-full uppercase ${priorityStyle}">
                        ${issue.priority}
                     </span>
                 </div>
