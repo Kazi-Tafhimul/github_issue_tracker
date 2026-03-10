@@ -7,6 +7,7 @@ const labelConfig = {
 
     }
 let allIssues = [];
+let currentFilter = 'all';
 const loadCard = () =>{
     fetch('https://phi-lab-server.vercel.app/api/v1/lab/issues')
       .then(res => res.json())
@@ -16,7 +17,32 @@ const loadCard = () =>{
         
       })
 }
+const searchIssues = () =>{
+    const searchText = document.getElementById('search-input').value;
+     if(searchText.trim() === ""){
+         loadCard();
+         return;
+     }
+    fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${searchText}`)
+    .then(res => res.json())
+    .then(result => {
+        const apiData = result.data;
+        const sectionWiseData = apiData.filter(issue => {
+            return (currentFilter === "all" || issue.status === currentFilter)
+        });
+        displayCard(sectionWiseData);
+    })
+    const filtered = allIssues.filter(issue => {
+        const matcheStatus = (currentFilter === 'all' || issue.status === currentFilter);
+        const matchSearch = issue.title.toLowerCase().includes(searchText);
+        return matcheStatus && matchSearch
+
+
+    });
+    displayCard(filtered);
+}
 const filterIssues = (status) => {
+    currentFilter = status;
     const allButtons = document.querySelectorAll('.filter-btn');
     allButtons.forEach(btn => {
         btn.classList.remove('btn-primary');
