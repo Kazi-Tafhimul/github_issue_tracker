@@ -1,25 +1,55 @@
+const labelConfig = {
+        'bug' : {color: "bg-red-100 text-red-600 border-red-200" ,icon:"fa-bug"},
+        'help wanted' : {color:"bg-orange-100 text-orange-600 border-orange-100  ", icon:"fa-life-ring"},
+        'documentation' : {color:"bg-violet-100 text-violet-600 border-violet-100", icon:"fa-file-lines"},
+        'enhancement':{color:"bg-green-100 text-green-600 border-green-100", icon:"fa-wand-magic-sparkles"},
+        "good first issue" : {color:"bg-yellow-100 text-yellow-600 border-yellow-100" ,'icon':'fa-seedling'}
+
+    }
+let allIssues = [];
 const loadCard = () =>{
     fetch('https://phi-lab-server.vercel.app/api/v1/lab/issues')
       .then(res => res.json())
       .then(result => {
-        displayCard(result.data)
+        allIssues  = result.data;
+        displayCard(allIssues);
         
       })
+}
+const filterIssues = (status) => {
+    if(status === 'all'){
+        displayCard(allIssues);
+
+    }
+    else{
+        const filtered = allIssues.filter(issue => issue.status === status);
+        displayCard(filtered);
+    }
+
 }
 
 const displayCard = (issues) =>{
     const container = document.getElementById('card-container')
+    const issuesCount = document.getElementById('issues-count')
     container.innerHTML = '';
+    if(issuesCount){
+        issuesCount.innerText = `${issues.length} Issues`;
+    }
+    
    
     issues.forEach(issue => {
 
         const newCard = document.createElement('div');
+        let statusImage='';
+        
         let borderTopStyle = '';
         if(issue.status === 'open'){
             borderTopStyle = "border-t-green-500";
+            statusImage = 'assets/Open-Status.png';
         }
         else if(issue.status === "closed"){
             borderTopStyle = "border-t-violet-500";
+            statusImage = 'assets/Closed-Status.png'
         }
         let priorityStyle = '';
         if(issue.priority === 'high'){
@@ -32,13 +62,21 @@ const displayCard = (issues) =>{
         else if(issue.priority === 'low'){
             priorityStyle = "bg-violet-50 text-violet-500"
         }
+        const labelHtml = issue.labels.map(lable => {
+            const config = labelConfig[lable.toLowerCase()];
+            return `
+             <span class="${config.color} font-bold text-[10px] px-2 py-1 rounded-full border flex items-center gap-1">
+                <i class="fa-solid ${config.icon} text-[12px]"></i> ${lable.toUpperCase()}
+            </span>
+            `
+        }).join('');
         
         newCard.innerHTML = `
          <div class="card bg-white border border-gray-100 border-t-4 ${borderTopStyle} shadow-sm rounded-xl transition-all hover:shadow-md h-full">
     
             <div class="p-5 flex flex-col gap-4">
                 <div class="flex flex-row justify-between items-start">
-                    <img src="assets/Open-Status.png"  alt="status">
+                    <img src= ${statusImage}  alt="status">
                     <span class="font-bold text-[12px] px-3 py-1 rounded-full uppercase ${priorityStyle.split(' ')[0]} ${priorityStyle.split(' ')[1]}">
                        ${issue.priority}
                     </span>
@@ -51,18 +89,15 @@ const displayCard = (issues) =>{
                 </p>
             </div>
 
-        <div class="flex flex-row flex-wrap gap-2">
-            <span class="bg-red-100 text-red-600 font-bold text-[10px] px-2 py-1 rounded-full border border-red-200 flex items-center gap-1">
-                <i class="fa-solid fa-bug text-[12px]"></i> BUG
-            </span>
-            <span class="bg-orange-100 text-orange-600 font-bold text-[10px] px-2 py-1 rounded-full border border-orange-100 flex items-center gap-1">
-                <i class="fa-solid fa-life-ring text-[12px]"></i> HELP WANTED
-            </span>
+        <div class="flex flex-col  md:flex-row  overflow-hidden gap-2">
+        ${labelHtml}
+           
+            
         </div>
         <hr class="border-t border-gray-300">
         <div>
             <p class="text-gray-400 font-normal text-[12px]">#${issue.id} by ${issue.author}</p>
-            <p class="text-gray-400 font-normal text-[12px]">1/15/2024</p>
+            <p class="text-gray-400 font-normal text-[12px]">${new Date(issue.createdAt).toLocaleDateString()}</p>
         </div>
 
     </div>`
