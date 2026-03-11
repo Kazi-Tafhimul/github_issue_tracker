@@ -14,4 +14,11 @@ const add = (a, b) => a + b;
 
 
 ### 5. What are template literals?
->Ans: String wraped in backticks that allow us to easily put in variables using ${} and write text across multiple lines without errors. 
+>Ans: String wraped in backticks that allow us to easily put in variables using ${} and write text across multiple lines without errors. ***Example***:
+```javascript
+const name = "Tafhimul";
+const greeting = `Hello ${name}, 
+Welcome to the Github Issues Tracker project!`;
+
+console.log(greeting);
+```
