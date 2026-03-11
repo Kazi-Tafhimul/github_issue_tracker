@@ -73,7 +73,12 @@ const filterIssues = (status) => {
 
 }
 
-const showDetails = (issue) => {
+const showDetails = (id) => {
+    fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`)
+    .then(res => res.json())
+    .then(result => {
+        const issue = result.data;
+    
     const modal = document.getElementById('my_modal_5');
     const title = document.getElementById('modal-title');
     const description = document.getElementById('modal-description');
@@ -92,11 +97,11 @@ const showDetails = (issue) => {
 
     if(issue.status === 'open'){
         modalStatus.innerText = 'Opened';
-        modalStatus.classList.add('px-3', 'py-1', 'rounded-full', 'bg-green-500', 'text-white', 'font-normal', 'text-[12px]')
+        modalStatus.className = 'px-3 py-1 rounded-full bg-green-500 text-white font-normal text-[12px]'
     }
     else{
         modalStatus.innerText = 'Closed';
-        modalStatus.classList.add('px-3', 'py-1', 'rounded-full', 'bg-violet-500', 'text-white', 'font-normal', 'text-[12px]')
+        modalStatus.className = 'px-3 py-1 rounded-full bg-violet-500 text-white font-normal text-[12px]'
 
     }
     let priorityColor = '';
@@ -109,7 +114,9 @@ const showDetails = (issue) => {
     else if(issue.priority === 'low'){
         priorityColor = 'bg-violet-500';
     }
-    modalPriority.classList.add('px-4', 'py-1', 'rounded-full', 'text-white', 'font-bold', 'text-[12px]', 'uppercase', '${priorityColor}')
+   
+    modalPriority.className = `px-4 py-1 rounded-full text-white font-bold text-[12px] uppercase ${priorityColor}`;
+    modalPriority.innerText = issue.priority
     modalLabels.innerHTML = issue.labels.map(label => {
         const config = labelConfig[label.toLowerCase()] || {color: "bg-gray-100", icon: "fa-tag"};
         return `
@@ -119,6 +126,7 @@ const showDetails = (issue) => {
     }).join('');
 
     modal.showModal();
+})
 
 }
 
@@ -135,7 +143,7 @@ const displayCard = (issues) =>{
 
         const newCard = document.createElement('div');
         newCard.onclick = () => {
-            showDetails(issue)
+            showDetails(issue.id)
 
         };
         newCard.classList.add('cursor-pointer');
