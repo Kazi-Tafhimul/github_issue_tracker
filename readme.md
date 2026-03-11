@@ -7,10 +7,10 @@
 map() => We can use map when we want to transform every element of the array into something else and store the results in a new array.
 filter()=>We use this method when we want to substract some element from an array based on a specific condition. 
 ### 4.  What is an arrow function?
- Ans: An arrow function allow us to skip the function keyword. If the function has only one line of code that returns a value we cam skip return keyword . ***Example***: 
-\`\`\`javascript
+> Ans: An arrow function allow us to skip the function keyword. If the function has only one line of code that returns a value we cam skip return keyword . ***Example***: 
+```javascript
 const add = (a, b) => a + b;
-\`\`\`
+```
 
 
 ### 5. What are template literals?
