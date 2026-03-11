@@ -4,7 +4,7 @@ document.getElementById('sign-in-btn').addEventListener("click",function(){
 
     if(nameInput === 'admin' && passwordInput === 'admin123'){
         alert("sign in successfull");
-        window.location.assign("/home.html")
+        window.location.assign("home.html")
 
     }
     else{
